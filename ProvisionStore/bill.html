@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <script src="Scripts/jquery-3.3.1.js"></script>
+    <script>
+        $(document).ready(function () {
+            debugger
+            var items = $('#uItems');
+            var detail = $('#uDetails');
+            
+            var tot = 0;
+            var uid = sessionStorage.getItem("id");
+            var uname = sessionStorage.getItem("name");
+            var unum = sessionStorage.getItem("number");
+            var uaddr = sessionStorage.getItem("address");
+            detail.append(' <tr> <th>USER ID :</th><td>' + uid + '</td>  </tr> <tr> <th>NAME :</th><td>' + uname + '</td>  </tr> <tr> <th>MOBILE NUMBER :</th><td>' + unum + '</td>  </tr> <tr> <th>ADDERSS :</th><td>' + uaddr + '</td>  </tr> <br/>')
+            $.ajax({    
+                type: 'GET',
+                url: 'api/pItems',
+                datatype: 'json',
+                success: function (data) {
+
+                    $.each(data, function (index, val) {
+                        var name = val.ProductName;
+                        var price = val.Price;
+                        var qty = val.quantity;
+                        var total = val.total;
+                        var id = val.productId;
+                        tot = total + tot;
+                        items.append('<tr id = ' + id + '><td>' + name + '</td><td>' + price + '</td><td>' + qty + '</td><td>' + total+'<br/>');
+                                               
+                    });
+                    $('#tot').val(tot);
+                    var gst = tot * 5 / 100;
+                    $('#cgst').val(gst);
+                    $('#sgst').val(gst);
+                    var gtotal = tot + gst + gst;
+                    $('#gtotal').val(gtotal);
+                }
+            });
+            //var tot = total.val(id);
+            //tot = total + tot;
+            //gtotal = +(tot) * 5;
+            //gtotal.appendTo('<tr><td>' + gtotal + '</td>');
+        });
+
+        function finish() {
+
+            $.ajax({
+                type: 'DELETE',
+                url: 'api/billing',
+                dataType: 'json',
+                success:
+                    alert("THANK YOU FOR VISITING"),
+               
+            });
+
+            window.location = "HomePage.html";
+        }
+
+    </script>
+</head>
+<body>
+
+    <div> <h3>MUNJUNATHA PROVISION STORE</h3></div>
+    <hr>
+    <div>
+    <table class="table-striped " id="uDetails" align="left"></table></div><br /><br /><br /><br />
+    <hr>
+    <div>
+        <table class="table-striped text-center " id="uItems" border="1" align="left">
+
+            <tr>
+                <th>ItemName       </th>
+                <th>Price          </th>
+                <th>Quantity       </th>
+                <th>Total </th>
+            </tr>
+
+
+
+        </table>
+    </div><br /><br /><br /><br /><br />
+
+    <div>
+    <hr />
+        Grand Total :<br />
+        <hr />
+        TOTAL       :<input type="text" id="tot" disabled="disabled" /><br />
+        CGST  5%    :<input type="text" id="cgst" disabled="disabled" /><br />
+        SGST  5%    :<input type="text" id="sgst" disabled="disabled" /><br />
+        <hr />
+        GRAND TOTAL :<input type="text" id="gtotal" disabled="disabled" /><br />
+    </div><br />
+    <input type="button" id=" btn1" value="FINISH" onclick="finish();" />
+</body>
+</html>

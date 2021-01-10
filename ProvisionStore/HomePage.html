@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SHOPING</title>
+    <script src="Scripts/jquery-3.3.1.js"></script>
+    
+
+
+</head>
+<body> 
+    <form action="Cart.html">
+        <table align="center" border="1" id="pItems">
+            <tr>
+                <td colspan="2" bgcolor="pink" align="center"> <h3>MANJUNATHA PROVISION STORE</h3></td>
+            </tr>
+            <tr>
+                <td>Item:</td>
+                <td><select id="iname" onchange="setprice(this.value);"><option></option></select></td>
+            </tr>
+            <tr>
+                <td>Price: </td>
+                <td><input type="text" id="iprice" readonly value="" /></td>
+            </tr>
+            <!--<tr>
+                <td>tax: </td>
+                <td><input type="text" disabled="disabled" id="itax" readonly value="" /></td>
+            </tr>-->
+            <tr>
+                <td>Quantity: </td>
+                <td><input type="text" id="iqty" value="" /></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><input type="submit" id="btn" value="Add to cart" onclick="return addItem();" /></td>
+            </tr>
+            <!--<tr>
+                <th>ItemName</th>
+                <th>Price</th>
+                <th>Tax</th>
+                <th>Quantity</th>
+                <th>Total</th>
+
+            </tr>-->
+
+
+        </table>
+        <!--<table align="center">
+            <tr>
+                <th colspan="4">
+                    Grand Total =
+                    <input type="text" id="gtvcity" readonly />
+                </th>
+            </tr>
+        </table>-->
+    </form>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var pname = $('#iname');
+            $.ajax({
+                type: 'GET',
+                url: 'api/billing',
+                datatype: 'json',
+                success: function (data) {
+
+                    $.each(data, function (index, val) {
+                        var pn = val.productName;
+                        pname.append('<option>' + pn + '</option>');
+                    });
+                }
+            });
+            //$.ajax({
+            //    type: 'DELETE',
+            //    url: 'api/billing',
+            //    datatype: 'json',
+            //});
+        });
+
+
+        function setprice(name) {
+
+            $.ajax({
+                type: 'GET',
+                url: 'api/billing/',
+                datatype: 'json',
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        if (name == value.productName) {
+                            $('#iprice').val(value.productPrice);
+                        }
+                        
+
+                    });
+
+                }
+            });
+
+        }
+        
+
+        function addItem() {
+            var items = $('#pItems');
+            var qty = $('#iqty').val();
+            var name = $('#iname').val();
+            if (name == "") {
+                alert("select an item");
+                return false;
+            }
+            else if (qty <= 0 || qty == "") {
+                alert("invalid quantity!!!");
+                $('iqty').focus();
+                return false;
+            }
+            else {
+
+                // $('#tr').remove();
+                var price = $('#iprice').val();
+                var tot = price * qty;
+
+
+                //gtotal = + (gtotal) + tot;
+                //$('#gtvcity').val(gtotal);
+
+               
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'api/billing?ProductName=' + name + '&&Price=' + price + '&&quantity=' + qty + '&&total=' + tot,
+                    datatype: 'json'
+                });
+                //$.ajax({
+                //    type: 'get',
+                //    url: 'api/billing/1',
+                //    datatype: 'json',
+                //    success: function (data) {
+
+                //        $.each(data, function (index, val) {
+                //            var id = val.productId;
+                //            items.append('<tr id=' + id + '><td>' + name + '</td><td>' + price + '</td><td>' + tax + '</td><td>' + qty + '</td><td>' + tot + '</td><td><input type = button id = ' + id + ' value = deleteItem onclick = deleteItem(this.id);></input></td></tr>');
+                //        });
+
+
+                //    }
+                //});
+
+
+                return true;
+
+            }
+        }
+    </script>
+</body>
+</html>

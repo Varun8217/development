@@ -1,0 +1,219 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Scripts/jquery-3.3.1.js"></script>
+    <link href="Content/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var items = $('#pItems');
+            $.ajax({
+                type: 'GET',
+                url: 'api/pItems',
+                datatype: 'json',
+                success: function (data) {
+
+                    $.each(data, function (index, val) {
+                        var name = val.ProductName;
+                        var price = val.Price;
+                        var qty = val.quantity;
+                        var total = val.total;
+                        var id = val.productId;
+                        items.append('<tr id = ' + id + '><td>' + name + '</td><td>' + price + '</td><td>' + qty + '</td><td>' + total + '</td><td><input type=button id = ' + id + ' value = edit onclick="EditItem(' + id + ')"></input><input type=button id = ' + id + ' value = delete onclick= deleteItem(this.id);></input></td></tr>');
+                    });
+
+
+                }
+            });
+        });
+        function deleteItem(id) {
+
+            $.ajax({
+                type: 'DELETE',
+                url: 'api/pItems/' + id,
+                datatype: 'json',
+                success: location.reload(),
+            });
+        }
+        function EditItem(id) {
+            debugger
+            $('#myModal').modal('show');
+            $('#hdnid').val(id);
+        }
+        function UpdateItem() {
+            debugger
+
+            //qty = prompt("enter new quantity ");
+            var id = $('#hdnid').val();
+            var qty = $('#quantity').val();
+            if (qty == "" || qty <= 0)
+                alert("invalid quantity");
+            else {
+
+                $.ajax({
+                    type: 'GET',
+                    url: 'api/pItems/' + id,
+                    datatype: 'json',
+                    success: function (data) {
+
+                        $.each(data, function (index, val) {
+
+                            name = val.ProductName;
+                            price = val.Price;
+                            total = +(price) * qty;
+
+                        });
+                    }
+                });
+                $.ajax({
+                    type: 'PUT',
+                    url: 'api/pItems/' + id + '?ProductName=' + name + '&&Price=' + price + '&&quantity=' + qty + '&&total=' + total,
+                    datatype: 'json',
+                    success: location.reload(),
+                });
+            }
+        }
+
+        //function getUser() {
+        //    $('#myModal1').modal('show');
+        //    var id = $('#userid').val();
+
+        //    verifyUser(id);
+
+        //}
+
+        function AddUser() {
+            window.location="user.html";
+        }
+
+        //function verifyUser(id) {
+        //    if (id == "" || isNaN(id)) {
+        //        $('#myModal2').modal('show');
+        //    }
+        //    else {
+        //        alert(id);
+        //        //$.ajax({
+        //        //    type: 'GET',
+        //        //    url: 'api/userdetails/' + id,
+        //        //    dataType: 'json',
+
+        //        //});
+        //    }
+        //}
+    </script>
+</head>
+<body>
+
+
+    <table id="pItems" border="1" align="center">
+        <tr>
+            <td colspan="2"><a href="HomePage.html" bgcolor="yellow">add new item</a></td>
+        </tr>
+        <tr>
+            <th>ItemName       </th>
+            <th>Price          </th>
+            <th>Quantity       </th>
+            <th>Total </th>
+        </tr>
+
+
+    </table>
+    <center>
+        <div>
+            <br />
+            <input type="button" id="ctb" onclick="AddUser();" value="Continue to biling" />
+            
+        </div>
+    </center>
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title text-center">EDIT</h4>
+                </div>
+                <div class="modal-body">
+                    <input hidden id="hdnid" value="" />
+                    <p>Enter Quantity</p><input type="text" id="quantity" class="text-center form-control" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="UpdateItem();">Save</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="modal fade" id="myModal1" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title text-center">Existing User??</h4>
+                </div>
+                <div class="modal-body">
+                    <input hidden id="hdnid1" value="" />
+                    <p>Enter User ID</p><input type="text" id="useid" class="text-center form-control" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button"  class="btn btn-primary" onclick="return verifyUser();">Submit</button>
+                    <button type="button"  class="btn btn-primary" onclick="AddUser();">Register now</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="modal fade" id="myModal1" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title text-center">Existing User??</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Enter User ID</p><input type="text" id="useid" class="text-center form-control" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="return getUser();">Submit</button>
+                    <button type="button" class="btn btn-primary" onclick="AddUser();">Register now</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="modal fade" id="myModal2" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title text-center">user not found</h4>
+            </div>
+            <div class="modal-body">
+                <p>Entered User ID is incorrect.If you are a new user regester now.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="AddUser();">Register now</button>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+
+</html>

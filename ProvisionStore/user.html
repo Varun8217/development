@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Scripts/jquery-3.3.1.js"></script>
+    <script>
+        function AddUser() {
+            debugger
+            var name = $('#nm').val();
+            var num = $('#phn').val();
+            var Adr = $('#add').val();
+            var id = Math.floor(Math.random() * 999 + 1000);
+            //alert(num);
+            debugger
+            if (name == "" || num == "" || Adr == "") {
+                alert("enter the details");
+                return false;
+            }
+            else if (num.length < 10 || isNaN(num)) {
+                alert("mobile number is incorrect");
+                //<a href="user.html"> user.html </a>
+                return false;
+            }
+            else {
+
+
+                sessionStorage.setItem("name", name);
+                sessionStorage.setItem("number", num);
+                sessionStorage.setItem("address", Adr);
+                sessionStorage.setItem("id", id);
+                
+                $.ajax({
+                    type: 'POST',
+                    url: 'api/userDetails?Uname=' + name + '&&Umob=' + sessionStorage.getItem("number") + '&&UDeliveryAddress=' + Adr + '&&UserID=' + id,
+                    datatype: 'json'
+
+                });
+                return true;
+            }
+        }
+
+    </script>
+
+    <style>
+        body{
+            background-color:coral;
+        }
+        table {
+            border-collapse:collapse;
+            background-color : paleturquoise;
+        }
+        
+        th,td{
+            width : 150px;
+            text-align:center;
+            border:1px solid black;
+            padding:5px;
+        }
+
+
+         
+    </style>
+</head>
+<body>
+
+    <form action="bill.html" method="get">
+        <table class="table-striped text-center" align="center">
+            <tr>
+                <td colspan="2">Manjunatha Provision Store</td>
+            </tr>
+            <tr>
+                <th>Name :</th>
+                <td><input type="text" id="nm" /></td>
+            </tr>
+            <tr>
+                <th>Phone :</th>
+                <td><input type="text" maxlength="10" id="phn" /></td>
+            </tr>
+            <tr>
+                <th>Address : </th>
+                <td><textarea  cols="15" rows="6" maxlength="150"  id="add"></textarea></td>
+            </tr>
+            
+            <tr>
+                <td colspan="2">
+                    <!--<button type="button" id="sbmt" value="SUBMIT" onclick="return AddUser();">SUBMIT</button>-->
+
+                    <button type="submit" id="sbmt" value="SUBMIT" onclick="AddUser()">SUBMIT</button>
+                </td>
+            </tr>
+            
+        </table>
+    </form>
+</body>
+</html>
